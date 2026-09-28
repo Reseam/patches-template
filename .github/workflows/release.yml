@@ -1,0 +1,44 @@
+name: release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    env:
+      ENGINE_VERSION: v0.13.0
+      RESEAM_BIN: ${{ github.workspace }}/engine/reseam
+      RESEAM_BUNDLE_KEY: ${{ github.workspace }}/bundle-signing.key
+      RESEAM_HOMEPAGE: ${{ github.server_url }}/${{ github.repository }}
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - uses: gradle/actions/setup-gradle@v4
+
+      - name: Install the Reseam CLI and signing key
+        run: |
+          mkdir -p engine
+          curl -fsSL -o engine/reseam https://git.reseam.app/reseam/reseam/releases/download/$ENGINE_VERSION/reseam-linux-x64
+          chmod +x engine/reseam
+          echo "${{ secrets.BUNDLE_SIGNING_KEY_B64 }}" | base64 -d > bundle-signing.key
+
+      - name: Build and stage the release
+        run: |
+          name=$(sed -n 's/^name = "\(.*\)"/\1/p' manifest.toml)
+          export RESEAM_BUNDLE_URL="$RESEAM_HOMEPAGE/releases/download/$GITHUB_REF_NAME/$name.reseam"
+          ./gradlew stageRelease -PreleaseTag=$GITHUB_REF_NAME --no-daemon
+
+      - name: Publish the GitHub release
+        run: gh release create "$GITHUB_REF_NAME" build/reseam/release/* --title "$GITHUB_REF_NAME" --generate-notes
