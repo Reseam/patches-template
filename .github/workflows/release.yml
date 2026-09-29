@@ -30,7 +30,7 @@ jobs:
       - name: Install the Reseam CLI and signing key
         run: |
           mkdir -p engine
-          curl -fsSL -o engine/reseam https://git.reseam.app/reseam/reseam/releases/download/$ENGINE_VERSION/reseam-linux-x64
+          curl -fsSL -o engine/reseam https://cdn.reseam.app/engine/$ENGINE_VERSION/reseam-linux-x64
           chmod +x engine/reseam
           echo "${{ secrets.BUNDLE_SIGNING_KEY_B64 }}" | base64 -d > bundle-signing.key
 
