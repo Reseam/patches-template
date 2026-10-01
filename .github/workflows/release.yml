@@ -12,7 +12,6 @@ jobs:
   release:
     runs-on: ubuntu-latest
     env:
-      ENGINE_VERSION: v0.13.0
       RESEAM_BIN: ${{ github.workspace }}/engine/reseam
       RESEAM_BUNDLE_KEY: ${{ github.workspace }}/bundle-signing.key
       RESEAM_HOMEPAGE: ${{ github.server_url }}/${{ github.repository }}
@@ -30,7 +29,8 @@ jobs:
       - name: Install the Reseam CLI and signing key
         run: |
           mkdir -p engine
-          curl -fsSL -o engine/reseam https://cdn.reseam.app/engine/$ENGINE_VERSION/reseam-linux-x64
+          version=$(sed -n 's/.*id("app.reseam.workspace") version "\(.*\)".*/\1/p' settings.gradle.kts)
+          curl -fsSL -o engine/reseam https://cdn.reseam.app/engine/v$version/reseam-linux-x64
           chmod +x engine/reseam
           echo "${{ secrets.BUNDLE_SIGNING_KEY_B64 }}" | base64 -d > bundle-signing.key
 

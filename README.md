@@ -55,4 +55,4 @@ Users paste this URL into Add bundle in Reseam Manager to get updates. Manager s
 https://github.com/<owner>/<repo>/releases/latest/download/patches.json
 ```
 
-When you move to a new Reseam version, bump the plugin version in `settings.gradle.kts` and `ENGINE_VERSION` in the workflow together.
+When you move to a new Reseam version, bump the plugin version in `settings.gradle.kts`. The release workflow downloads the CLI of that same version.
