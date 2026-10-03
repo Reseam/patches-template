@@ -42,7 +42,7 @@ Modules need no build script. The `app.reseam.workspace` plugin configures them 
 
 ```shell
 ./gradlew bundle
-reseam bundle list build/reseam/example-patches.reseam --trust <public key>
+reseam bundle list build/reseam/example-patches.reseam
 reseam patch app.apk \
   --bundle build/reseam/example-patches.reseam \
   --trust <public key> \
