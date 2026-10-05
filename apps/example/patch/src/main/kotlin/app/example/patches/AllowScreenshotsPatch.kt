@@ -7,8 +7,8 @@ import app.reseam.patch.patch
 private const val WINDOW = "android.view.Window"
 
 private object SecureFlags : ExtClass("app.example.screenshots.SecureFlags") {
-    val addFlags = static("addFlags", WINDOW, Type.Int)
-    val setFlags = static("setFlags", WINDOW, Type.Int, Type.Int)
+    val addFlags by static(WINDOW, Type.Int)
+    val setFlags by static(WINDOW, Type.Int, Type.Int)
 }
 
 val allowScreenshots = patch("Allow screenshots") {
