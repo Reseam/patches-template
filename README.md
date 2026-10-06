@@ -64,3 +64,7 @@ https://github.com/<owner>/<repo>/releases/latest/download/patches.json
 ```
 
 When you move to a new Reseam version, bump the plugin version in `settings.gradle.kts`. The release workflow downloads the CLI of that same version.
+
+## License
+
+AGPL-3.0-or-later, with additional terms under section 7 in [NOTICE](NOTICE).
