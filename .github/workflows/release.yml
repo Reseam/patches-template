@@ -15,9 +15,14 @@ jobs:
       RESEAM_BIN: ${{ github.workspace }}/engine/reseam
       RESEAM_BUNDLE_KEY: ${{ github.workspace }}/bundle-signing.key
       RESEAM_HOMEPAGE: ${{ github.server_url }}/${{ github.repository }}
+      # Outside build/: Gradle deletes a task's outputs there when the task has no history, as on a fresh checkout.
+      RESEAM_PATCHES_JSON_OUT: ${{ github.workspace }}/patches.json
       GH_TOKEN: ${{ github.token }}
     steps:
+      # Full history, so the release notes can list the commits since the previous tag.
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - uses: actions/setup-java@v4
         with:
@@ -33,6 +38,23 @@ jobs:
           curl -fsSL -o engine/reseam https://cdn.reseam.app/engine/v$version/reseam-linux-x64
           chmod +x engine/reseam
           echo "${{ secrets.BUNDLE_SIGNING_KEY_B64 }}" | base64 -d > bundle-signing.key
+
+      # The build adds this release to the latest index, so a clean checkout keeps the release history.
+      - name: Download the latest release index
+        run: |
+          status=$(curl -sSL -o patches.json -w '%{http_code}' "$RESEAM_HOMEPAGE/releases/latest/download/patches.json")
+          case $status in
+            200) ;;
+            404) rm patches.json ;;
+            *) echo "latest patches.json returned $status" >&2; exit 1 ;;
+          esac
+
+      - name: Write the release notes from the commits since the previous tag
+        run: |
+          range=$GITHUB_SHA
+          if previous=$(git describe --tags --abbrev=0 "$GITHUB_SHA^" 2>/dev/null); then range=$previous..$GITHUB_SHA; fi
+          git log --no-merges --format='- %s' "$range" > release-notes.md
+          echo "RESEAM_RELEASE_DESCRIPTION_FILE=$PWD/release-notes.md" >> "$GITHUB_ENV"
 
       - name: Build and stage the release
         run: |
