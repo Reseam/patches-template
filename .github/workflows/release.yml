@@ -63,4 +63,7 @@ jobs:
           ./gradlew stageRelease -PreleaseTag=$GITHUB_REF_NAME --no-daemon
 
       - name: Publish the GitHub release
-        run: gh release create "$GITHUB_REF_NAME" build/reseam/release/* --title "$GITHUB_REF_NAME" --generate-notes
+        run: |
+          index=$(jq -rn --arg url "$RESEAM_HOMEPAGE/releases/latest/download/patches.json" '$url | @uri')
+          gh release create "$GITHUB_REF_NAME" build/reseam/release/* --title "$GITHUB_REF_NAME" \
+            --notes "[Add to Reseam Manager](https://reseam.app/add/?url=$index)" --generate-notes

@@ -58,11 +58,13 @@ The workflow in `.github/workflows/release.yml` runs on `v*` tags. It builds and
 1. Add the signing key as the repository secret `BUNDLE_SIGNING_KEY_B64`: `base64 -w0 ~/.reseam/bundle-signing.key`.
 2. Push a tag: `git tag v0.1.0 && git push origin v0.1.0`.
 
-Users paste this URL into Add bundle in Reseam Manager to get updates. Reseam Manager shows the signer's public key before trusting it, so publish your key where users can check it:
+Share your patch source with this link. It opens Reseam Manager, which shows the source's apps, patches and signing key before adding it, and keeps it up to date from your latest release. Every release lists the link too.
 
 ```text
-https://github.com/<owner>/<repo>/releases/latest/download/patches.json
+https://reseam.app/add/?url=https%3A%2F%2Fgithub.com%2F<owner>%2F<repo>%2Freleases%2Flatest%2Fdownload%2Fpatches.json
 ```
+
+Without Reseam Manager, the link opens a page with the steps to add the source. Publish your public key where users can check it against the one Reseam Manager shows.
 
 When you move to a new Reseam version, bump the plugin version in `settings.gradle.kts`. The release workflow downloads the CLI of that same version.
 
