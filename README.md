@@ -9,7 +9,7 @@ Start here to write your own patches for [Reseam](https://reseam.app). Copy this
 It ships two example patches that work on any app:
 
 - `Enable debugging` edits the manifest.
-- `Allow screenshots` redirects calls into Java code shipped in the bundle (an extension).
+- `Allow screenshots` redirects calls into Kotlin code shipped in the bundle (an extension).
 
 The [docs](https://reseam.app/docs/authoring/start/) walk through this template step by step.
 
@@ -32,7 +32,8 @@ Layout:
 manifest.toml                     bundle name, author, description
 settings.gradle.kts               Reseam plugin version
 apps/<app>/patch/                 Kotlin patches, one module per app
-apps/<app>/extensions/<name>/     Java code injected into the app
+apps/<app>/extensions/<name>/     Kotlin code injected into the app
+apps/<app>/settings/              in-app settings and translated strings (optional)
 shared/<name>/                    extensions used by more than one app
 ```
 
