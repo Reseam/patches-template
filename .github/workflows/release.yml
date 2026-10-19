@@ -10,14 +10,11 @@ permissions:
 
 jobs:
   release:
-    runs-on: ubuntu-latest
+    runs-on: ${{ vars.RUNNER || 'ubuntu-latest' }}
     env:
       RESEAM_BIN: ${{ github.workspace }}/engine/reseam
       RESEAM_BUNDLE_KEY: ${{ github.workspace }}/bundle-signing.key
-      RESEAM_HOMEPAGE: ${{ github.server_url }}/${{ github.repository }}
-      # Outside build/: Gradle deletes a task's outputs there when the task has no history, as on a fresh checkout.
-      RESEAM_PATCHES_JSON_OUT: ${{ github.workspace }}/patches.json
-      GH_TOKEN: ${{ github.token }}
+      RELEASE_TOKEN: ${{ github.token }}
     steps:
       # Full history, so the release notes can list the commits since the previous tag.
       - uses: actions/checkout@v4
@@ -39,31 +36,8 @@ jobs:
           chmod +x engine/reseam
           echo "${{ secrets.BUNDLE_SIGNING_KEY_B64 }}" | base64 -d > bundle-signing.key
 
-      # The build adds this release to the latest index, so a clean checkout keeps the release history.
-      - name: Download the latest release index
-        run: |
-          status=$(curl -sSL -o patches.json -w '%{http_code}' "$RESEAM_HOMEPAGE/releases/latest/download/patches.json")
-          case $status in
-            200) ;;
-            404) rm patches.json ;;
-            *) echo "latest patches.json returned $status" >&2; exit 1 ;;
-          esac
+      - name: Build the bundle
+        run: ./gradlew bundle -PreleaseTag=$GITHUB_REF_NAME --no-daemon
 
-      - name: Write the release notes from the commits since the previous tag
-        run: |
-          range=$GITHUB_SHA
-          if previous=$(git describe --tags --abbrev=0 "$GITHUB_SHA^" 2>/dev/null); then range=$previous..$GITHUB_SHA; fi
-          git log --no-merges --format='- %s' "$range" > release-notes.md
-          echo "RESEAM_RELEASE_DESCRIPTION_FILE=$PWD/release-notes.md" >> "$GITHUB_ENV"
-
-      - name: Build and stage the release
-        run: |
-          name=$(sed -n 's/^name = "\(.*\)"/\1/p' manifest.toml)
-          export RESEAM_BUNDLE_URL="$RESEAM_HOMEPAGE/releases/download/$GITHUB_REF_NAME/$name.reseam"
-          ./gradlew stageRelease -PreleaseTag=$GITHUB_REF_NAME --no-daemon
-
-      - name: Publish the GitHub release
-        run: |
-          index=$(jq -rn --arg url "$RESEAM_HOMEPAGE/releases/latest/download/patches.json" '$url | @uri')
-          gh release create "$GITHUB_REF_NAME" build/reseam/release/* --title "$GITHUB_REF_NAME" \
-            --notes "[Add to Reseam Manager](https://reseam.app/add/?url=$index)" --generate-notes
+      - name: Publish the release
+        run: engine/reseam release patches build/reseam/*.reseam --tag $GITHUB_REF_NAME

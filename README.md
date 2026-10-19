@@ -53,15 +53,16 @@ reseam patch app.apk \
 
 ## Release
 
-The workflow in `.github/workflows/release.yml` runs on `v*` tags. It builds and signs the bundle, adds the release to the `patches.json` of your latest release with the commit subjects since the previous tag as its notes, and attaches both to a GitHub release.
+The workflow in `.github/workflows/release.yml` runs on `v*` tags, on GitHub and on Forgejo, including Codeberg. It builds and signs the bundle, then [`reseam release patches`](https://reseam.app/docs/cli/release/) adds the release to the `patches.json` of your latest release with the commit subjects since the previous tag as its notes, and publishes both on a release.
 
 1. Add the signing key as the repository secret `BUNDLE_SIGNING_KEY_B64`: `base64 -w0 ~/.reseam/bundle-signing.key`.
-2. Push a tag: `git tag v0.1.0 && git push origin v0.1.0`.
+2. On Forgejo, set the repository variable `RUNNER` to the label of a runner with Java and Node.js. GitHub uses `ubuntu-latest`.
+3. Push a tag: `git tag v0.1.0 && git push origin v0.1.0`.
 
 Share your patch source with this link. It opens Reseam Manager, which shows the source's apps, patches and signing key before adding it, and keeps it up to date from your latest release. Every release lists the link too.
 
 ```text
-https://reseam.app/add/?url=https%3A%2F%2Fgithub.com%2F<owner>%2F<repo>%2Freleases%2Flatest%2Fdownload%2Fpatches.json
+https://reseam.app/add/?url=https%3A%2F%2Fgithub.com%2F<owner>%2F<repo>
 ```
 
 Without Reseam Manager, the link opens a page with the steps to add the source. Publish your public key where users can check it against the one Reseam Manager shows.
