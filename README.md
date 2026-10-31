@@ -71,4 +71,4 @@ When you move to a new Reseam version, bump the plugin version in `settings.grad
 
 ## License
 
-AGPL-3.0-or-later, with additional terms under section 7 in [NOTICE](NOTICE).
+AGPL-3.0-or-later.
