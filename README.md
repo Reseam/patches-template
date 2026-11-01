@@ -13,6 +13,11 @@ It ships two example patches that work on any app:
 
 The [docs](https://reseam.app/docs/authoring/start/) walk through this template step by step.
 
+## Patches
+
+<!-- patches:start -->
+<!-- patches:end -->
+
 ## Setup
 
 - JDK 17.
@@ -59,10 +64,18 @@ The workflow in `.github/workflows/release.yml` runs on `v*` tags, on GitHub and
 2. On Forgejo, set the repository variable `RUNNER` to the label of a runner with Java and Node.js. GitHub uses `ubuntu-latest`.
 3. Push a tag: `git tag v0.1.0 && git push origin v0.1.0`.
 
+After publishing, the workflow lists the released patches between the `patches:start` and `patches:end` markers in `README.md`, grouped by app, and commits the change to your default branch. Without the markers it leaves the README alone.
+
 Share your patch source with this link. It opens Reseam Manager, which shows the source's apps, patches and signing key before adding it, and keeps it up to date from your latest release. Every release lists the link too.
 
 ```text
 https://reseam.app/add/?url=https%3A%2F%2Fgithub.com%2F<owner>%2F<repo>
+```
+
+Put it behind the button in `.github/assets/add-to-reseam.svg` at the top of your README:
+
+```markdown
+[![Add to Reseam](.github/assets/add-to-reseam.svg)](https://reseam.app/add/?url=https%3A%2F%2Fgithub.com%2F<owner>%2F<repo>)
 ```
 
 Without Reseam Manager, the link opens a page with the steps to add the source. Publish your public key where users can check it against the one Reseam Manager shows.

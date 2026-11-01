@@ -41,3 +41,15 @@ jobs:
 
       - name: Publish the release
         run: engine/reseam release patches build/reseam/*.reseam --tag $GITHUB_REF_NAME
+
+      - name: Update the patch list in the README
+        env:
+          BRANCH: ${{ github.event.repository.default_branch }}
+        run: |
+          engine/reseam bundle list --json build/reseam/*.reseam > build/patch-list.json
+          git checkout "$BRANCH"
+          node .github/scripts/patch-list.mjs build/patch-list.json README.md
+          git diff --quiet README.md && exit 0
+          git -c user.name="github-actions[bot]" -c user.email="41898282+github-actions[bot]@users.noreply.github.com" \
+            commit -m "docs: update the patch list for $GITHUB_REF_NAME" README.md
+          git push origin "$BRANCH"
