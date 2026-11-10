@@ -5,8 +5,8 @@ import app.reseam.patch.patch
 
 private const val WINDOW = "android.view.Window"
 
-val allowScreenshots = patch("Allow screenshots") {
-    description("Allows screenshots on windows the app marks as secure.")
+val allowScreenshots = patch(ExamplePatchStrings.allowScreenshots) {
+    description(ExamplePatchStrings.allowScreenshotsDescription)
 
     execute {
         val redirected = listOf(SecureFlags.addFlags, SecureFlags.setFlags).sumOf { bytecode.redirectCalls(WINDOW, it.name, it) }

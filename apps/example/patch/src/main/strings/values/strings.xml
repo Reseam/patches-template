@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="allow_screenshots">Allow screenshots</string>
+    <string name="allow_screenshots_description">Allows screenshots on windows the app marks as secure.</string>
+    <string name="enable_debugging">Enable debugging</string>
+    <string name="enable_debugging_description">Marks the app debuggable, so adb can run-as it and attach debuggers without root.</string>
+</resources>

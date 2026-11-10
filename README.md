@@ -36,13 +36,13 @@ Layout:
 ```text
 manifest.toml                     bundle name, author, description
 settings.gradle.kts               Reseam plugin version
-apps/<app>/patch/                 Kotlin patches, one module per app
+apps/<app>/patch/                 Kotlin patches and their translated names, one module per app
 apps/<app>/extensions/<name>/     Kotlin code injected into the app
 apps/<app>/settings/              in-app settings and translated strings (optional)
 shared/<name>/                    extensions used by more than one app
 ```
 
-Modules need no build script. The `app.reseam.workspace` plugin configures them from the layout. How to write patches is in [Your first patch](https://reseam.app/docs/authoring/first_patch/).
+Modules need no build script beyond naming their string table with `reseamStrings`. The `app.reseam.workspace` plugin configures the rest from the layout. How to write patches is in [Your first patch](https://reseam.app/docs/authoring/first_patch/).
 
 ## Build and test
 
